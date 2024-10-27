@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Link } from 'react-router-dom';
 import { PlusCircle, Sparkles, Calendar, Clock, Cog, ArrowLeft, Cloud, RefreshCw, MoreVertical, Edit2, Trash2, X, Check } from 'lucide-react';
 import BackupComponent from './components/BackupComponent';
 
@@ -149,7 +150,27 @@ const WowMomentsApp = () => {
             <div className="text-sm text-gray-500">
               <p>感謝使用 Wow Moments</p>
               <p className="mt-2">由 Kyle Hsia 設計開發</p>
-              <p className="mt-4 text-center text-xs">© 2024 Wow Moments. All rights reserved.</p>
+
+              <div className="mt-6 pt-4 border-t border-gray-100">
+                <p className="text-center text-xs text-gray-400">
+                  © 2024 Wow Moments. All rights reserved.
+                </p>
+                <div className="mt-2 flex items-center justify-center space-x-3">
+                  <Link 
+                    to="/terms" 
+                    className="text-xs text-gray-400 hover:text-gray-600"
+                  >
+                    服務條款
+                  </Link>
+                  <span className="text-gray-300">•</span>
+                  <Link 
+                    to="/privacy" 
+                    className="text-xs text-gray-400 hover:text-gray-600"
+                  >
+                    隱私權政策
+                  </Link>
+                </div>
+              </div>
             </div>
           </div>
         </div>
