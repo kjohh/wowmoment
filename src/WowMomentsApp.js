@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { PlusCircle, Sparkles, Calendar, Clock, MoreVertical, Edit2, Trash2, X, Check } from 'lucide-react';
+import BackupComponent from './components/BackupComponent';
 
 const WowMomentsApp = () => {
   const [moments, setMoments] = useState([]);
@@ -69,6 +70,12 @@ const WowMomentsApp = () => {
       <h1 className="text-2xl font-bold mb-4 flex items-center">
         <Sparkles className="mr-2 text-yellow-400" /> Wow Moments
       </h1>
+
+      {/* 新增備份元件 */}
+      <div className="mb-6">
+        <BackupComponent />
+      </div>
+
       <div className="flex mb-4">
         <input
           type="text"
@@ -85,6 +92,7 @@ const WowMomentsApp = () => {
           <PlusCircle className="mr-2" size={20} /> 新增
         </button>
       </div>
+      
       {moments.length > 0 ? (
         moments.map((moment) => (
           <div key={moment.id} className="bg-white shadow rounded-lg p-4 mb-4 relative">
