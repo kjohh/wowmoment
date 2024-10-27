@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, forwardRef, useImperativeHandle } from 'react';
 import { Cloud, AlertCircle, CheckCircle } from 'lucide-react';
 
 const FOLDER_NAME = 'Wow Moments Backups';
 
-const BackupComponent = () => {
+const BackupComponent = forwardRef((props, ref) => {
   const [backupStatus, setBackupStatus] = useState('idle');
   const [lastBackupDate, setLastBackupDate] = useState(null);
   const [googleApi, setGoogleApi] = useState(null);
@@ -106,9 +106,11 @@ const BackupComponent = () => {
       await uploadToGoogleDrive(JSON.parse(moments), token);
       setLastBackupDate(new Date());
       setBackupStatus('success');
+      return true;
     } catch (error) {
       console.error('備份失敗:', error);
       setBackupStatus('error');
+      throw error;
     }
   }, []);
 
@@ -153,26 +155,34 @@ const BackupComponent = () => {
     loadGoogleAPI();
   }, [handleTokenResponse]);
 
-  const handleBackup = () => {
+  const handleBackup = useCallback(async () => {
     if (!googleApi || !tokenClient) {
       console.error('Google API not loaded');
       setBackupStatus('error');
-      return;
+      return false;
     }
 
     setBackupStatus('loading');
     
     try {
       if (accessToken) {
-        handleBackupWithToken(accessToken);
+        await handleBackupWithToken(accessToken);
+        return true;
       } else {
         tokenClient.requestAccessToken();
+        return false;
       }
     } catch (error) {
       console.error('Failed to initialize Google client:', error);
       setBackupStatus('error');
+      return false;
     }
-  };
+  }, [googleApi, tokenClient, accessToken, handleBackupWithToken]);
+
+  // Expose handleBackup method to parent component
+  useImperativeHandle(ref, () => ({
+    handleBackup
+  }), [handleBackup]);
 
   return (
     <div className="p-4 space-y-4">
@@ -225,6 +235,6 @@ const BackupComponent = () => {
       </div>
     </div>
   );
-};
+});
 
 export default BackupComponent;
