@@ -2,8 +2,11 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { PlusCircle, Sparkles, Calendar, Clock, Cog, ArrowLeft, Cloud, RefreshCw, MoreVertical, Edit2, Trash2, X, Check } from 'lucide-react';
 import BackupComponent from './components/BackupComponent';
+import { CoreMetrics } from './components/CoreMetricsTracking';
+import { useTracking } from './components/TrackingManager';
 
 const WowMomentsApp = () => {
+  const { trackEvent } = useTracking();
   const [moments, setMoments] = useState([]);
   const [newMoment, setNewMoment] = useState('');
   const [showSettings, setShowSettings] = useState(false);
@@ -47,11 +50,12 @@ const WowMomentsApp = () => {
     localStorage.setItem('wowMomentsSettings', JSON.stringify(settings));
   };
 
-  // 編輯功能
   const startEditing = (id, content) => {
     setEditingId(id);
     setEditingContent(content);
     setOpenMenuId(null);
+    // 追蹤查看時刻事件
+    CoreMetrics.trackMemoryViewed(id);
   };
 
   const cancelEditing = () => {
@@ -67,13 +71,13 @@ const WowMomentsApp = () => {
     setEditingContent('');
   };
 
-  // 刪除功能
   const deleteMoment = (id) => {
     setMoments(moments.filter(moment => moment.id !== id));
     setOpenMenuId(null);
+    // 追蹤刪除時刻事件
+    CoreMetrics.trackMemoryDeleted(id);
   };
 
-  // 選單控制
   const toggleMenu = (id) => {
     setOpenMenuId(openMenuId === id ? null : id);
   };
@@ -93,6 +97,9 @@ const WowMomentsApp = () => {
       
       setMoments(prev => [newMomentObj, ...prev]);
       setNewMoment('');
+      
+      // 追蹤新增時刻事件
+      CoreMetrics.trackMemoryCreated(newMoment);
     }
   };
 
